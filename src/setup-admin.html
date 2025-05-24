@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Admin User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Setup Admin User</h1>
+        
+        <div class="info message">
+            <strong>Note:</strong> This will create an admin user in Firebase Authentication.
+            Use email: <strong>admin@kidzzone.com</strong>
+        </div>
+
+        <form id="setupForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" value="admin@kidzzone.com" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter admin password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+            </div>
+            
+            <button type="submit" id="setupBtn">Create Admin User</button>
+        </form>
+        
+        <div id="message"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZVV35MNDjEJTrKMsHvDdCm0CNW63XUZ4",
+            authDomain: "new-project-f8d5e.firebaseapp.com",
+            projectId: "new-project-f8d5e",
+            storageBucket: "new-project-f8d5e.appspot.com",
+            messagingSenderId: "284483723352",
+            appId: "1:284483723352:web:1db28c1ed16afd4ebf2a2d",
+            measurementId: "G-TX0N65L84C"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('setupForm');
+        const messageDiv = document.getElementById('message');
+        const setupBtn = document.getElementById('setupBtn');
+
+        function showMessage(text, type) {
+            messageDiv.innerHTML = `<div class="${type} message">${text}</div>`;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long!', 'error');
+                return;
+            }
+
+            setupBtn.disabled = true;
+            setupBtn.textContent = 'Creating...';
+
+            try {
+                // Create user in Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Create admin document in Firestore
+                await setDoc(doc(db, 'admins', user.uid), {
+                    email: user.email,
+                    role: 'admin',
+                    displayName: 'Admin',
+                    createdAt: new Date(),
+                    isActive: true
+                });
+
+                showMessage('✅ Admin user created successfully! You can now login to the admin dashboard.', 'success');
+                
+                // Clear form
+                document.getElementById('password').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+            } catch (error) {
+                console.error('Error creating admin user:', error);
+                let errorMessage = 'Failed to create admin user: ';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage += 'Email already exists. Admin user may already be created.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage += 'Password is too weak. Use at least 6 characters.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Invalid email address.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showMessage(errorMessage, 'error');
+            } finally {
+                setupBtn.disabled = false;
+                setupBtn.textContent = 'Create Admin User';
+            }
+        });
+    </script>
+</body>
+</html>

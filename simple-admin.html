@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidzZone Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #ffeaea;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success {
+            color: #27ae60;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #eafaf1;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .credentials-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .credentials-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .credentials-box p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .dashboard {
+            display: none;
+            text-align: center;
+        }
+        
+        .dashboard h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .dashboard-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+        
+        .dashboard-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="login-header">
+                <h1>🎯 Admin Login</h1>
+                <p>KidzZone Admin Dashboard</p>
+            </div>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+            
+            <div id="errorMsg" class="error"></div>
+            <div id="successMsg" class="success"></div>
+            
+            <div class="credentials-box">
+                <h4>🔑 Test Credentials:</h4>
+                <p><strong>Email:</strong> admin@kidzzone.com</p>
+                <p><strong>Password:</strong> admin123</p>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard">
+            <h2>🎉 Welcome to Admin Dashboard!</h2>
+            <p>You are successfully logged in!</p>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card" onclick="alert('Stories Management - Coming Soon!')">
+                    <h3>📚 Stories</h3>
+                    <p>Manage stories</p>
+                </div>
+                
+                <div class="dashboard-card" onclick="alert('Videos Management - Coming Soon!')">
+                    <h3>🎬 Videos</h3>
+                    <p>Manage videos</p>
+                </div>
+                
+                <div class="dashboard-card" onclick="alert('Users Management - Coming Soon!')">
+                    <h3>👥 Users</h3>
+                    <p>View users</p>
+                </div>
+                
+                <div class="dashboard-card" onclick="alert('Settings - Coming Soon!')">
+                    <h3>⚙️ Settings</h3>
+                    <p>Admin settings</p>
+                </div>
+            </div>
+            
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // Simple admin credentials
+        const ADMIN_EMAIL = "admin@kidzzone.com";
+        const ADMIN_PASSWORD = "admin123";
+        
+        // Get form elements
+        const loginForm = document.getElementById('adminLoginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+        const loginContainer = document.getElementById('loginForm');
+        const dashboard = document.getElementById('dashboard');
+        
+        // Handle form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Hide previous messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            
+            // Simple validation
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                // Success
+                successMsg.textContent = 'Login successful! Redirecting...';
+                successMsg.style.display = 'block';
+                
+                // Hide login form and show dashboard after 1 second
+                setTimeout(() => {
+                    loginContainer.style.display = 'none';
+                    dashboard.style.display = 'block';
+                }, 1000);
+                
+            } else {
+                // Error
+                errorMsg.textContent = 'Invalid credentials! Use: admin@kidzzone.com / admin123';
+                errorMsg.style.display = 'block';
+            }
+        });
+        
+        // Logout function
+        function logout() {
+            loginContainer.style.display = 'block';
+            dashboard.style.display = 'none';
+            emailInput.value = '';
+            passwordInput.value = '';
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+        }
+        
+        // Auto-fill credentials for testing
+        emailInput.value = ADMIN_EMAIL;
+        passwordInput.value = ADMIN_PASSWORD;
+    </script>
+</body>
+</html>
